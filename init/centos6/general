@@ -1,0 +1,24 @@
+#!/bin/sh
+
+install="yum install -y "
+erase="yum erase -y "
+
+$erase vim-minimal
+$install vim 
+ln -s /usr/bin/vim /bin/vi
+
+# network tools
+software="openssh-server wget telnet vsftpd"
+# developemnt tools
+software+=" gcc gcc-c++ make gdb man man-pages ctags indent cmake"
+# monitor tools
+software+=" sysstat file tree"
+# compress tools
+software+=" zip unzip"
+# version control tools
+software+=" git svn"
+
+$install $software
+
+
+/etc/init.d/vsftpd start

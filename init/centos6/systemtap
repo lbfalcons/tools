@@ -1,0 +1,13 @@
+#!/bin/sh
+
+install="yum install -y "
+erase="yum erase -y "
+
+sed 's/enabled=0/enabled=1/g' -i /etc/yum.repos.d/CentOS-Debuginfo.repo
+
+kernel_version=`uname -r`
+$install systemtap yum-utils
+$install kernel-$kernel_version kernel-devel-$kernel_version
+debuginfo-install kernel-$kernel_version
+
+sed 's/enabled=1/enabled=0/g' -i /etc/yum.repos.d/CentOS-Debuginfo.repo
