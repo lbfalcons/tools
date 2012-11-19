@@ -1,0 +1,51 @@
+#!/bin/env stap
+
+global io_stat_bytes
+global io_stat_count
+global flag
+
+probe vfs.read.return
+{
+  if( pid() == target() )
+  {
+    if( $return > 0 )
+    {
+      if( devname == "N/A" ){
+        io_stat_bytes["hit"] += $return;
+        io_stat_count["hit"] ++;
+      }
+
+      io_stat_count["total"] ++;
+      io_stat_bytes["total"] += $return;
+    }
+    flag = 1;
+  }
+}
+
+probe timer.s(1)
+{
+  if( flag ==  1 )
+  {
+    printf("hit cache,bytes %d,count %d\t %d,%d,%d,%d\n",
+        io_stat_bytes["hit"]*100/io_stat_bytes["total"],
+        io_stat_count["hit"]*100/io_stat_count["total"],
+        io_stat_bytes["hit"],io_stat_bytes["total"],
+        io_stat_count["hit"],io_stat_count["total"]);
+    /*
+    foreach ( dev in io_stat_count )
+    {
+      printf("%s count %d,bytes %d\n",dev,io_stat_count[dev],io_stat_bytes[dev]);
+    }
+    printf("\n");
+    */
+
+    delete io_stat_bytes;
+    delete io_stat_count;
+    delete flag;
+  }
+}
+
+probe begin
+{
+  printf("==\n");
+}

@@ -1,0 +1,73 @@
+#!/bin/env stap
+
+global readahead_total,readahead_miss
+global pagecache_sync,pagecache_async
+global readahead_io
+global do_page_cache_ra 
+
+
+probe kernel.function("find_get_page").return
+{
+  if( pid() == target() )
+  {
+    if( $return == NULL )
+    {
+      readahead_miss ++;
+    }
+    readahead_total ++;
+  }
+}
+
+
+probe kernel.function("page_cache_sync_readahead")
+{
+  if( pid() == target() )
+  {
+    pagecache_sync++;
+  }
+}
+
+probe kernel.function("page_cache_async_readahead")
+{
+  if( pid() == target() )
+  {
+    pagecache_async++;
+  }
+}
+
+probe kernel.function("__do_page_cache_readahead")
+{
+  if( pid() == target() )
+  {
+    do_page_cache_ra ++;
+  }
+}
+
+probe kernel.function("read_pages")
+{
+  if( pid() == target() )
+  {
+    readahead_io ++ ;
+  }
+}
+
+probe timer.s(1)
+{
+  printf("readahead check total %d,miss %d,sync %d,async %d,do_pagecache_ra %d ra_io %d \n",
+      readahead_total,readahead_miss,
+      pagecache_sync,pagecache_async,
+      do_page_cache_ra,readahead_io
+      );
+
+  delete readahead_total;
+  delete readahead_miss;
+  delete pagecache_sync;
+  delete pagecache_async;
+  delete readahead_io;
+  delete do_page_cache_ra;
+}
+
+probe begin
+{
+  println("====");
+}

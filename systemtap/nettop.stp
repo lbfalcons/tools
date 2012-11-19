@@ -1,0 +1,29 @@
+#!/bin/env stap
+
+global accept
+global close
+
+
+probe syscall.accept
+{
+	if( pid() == target() )
+		accept ++
+}
+
+probe syscall.close
+{
+	if( pid() == target() )
+		close++
+}
+
+
+probe timer.s(1)
+{
+	printf("accept %d,close %d\n",accept,close)
+	accept = close = 0
+}
+
+probe begin
+{
+	printf("start\n");
+}

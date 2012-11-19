@@ -1,0 +1,49 @@
+#!/bin/env stap
+
+global hard, soft
+//global wq
+ 
+probe irq_handler.entry {
+	hard[irq, dev_name]++;
+}
+
+ 
+probe softirq.entry {
+	soft[cpu(), h,vec,action]++;
+}
+ 
+/*
+probe workqueue.execute {
+	wq[wq_thread, work_func]++
+}
+*/
+
+probe timer.s(1) {
+	println("==irq number:dev_name")
+	foreach( [irq, dev_name] in hard- limit 14) {
+		printf("%d,%s->%d\n", irq, kernel_string(dev_name), hard[irq, dev_name]);       
+	}
+ 
+	println("==softirq cpu:h:vec:action")
+	foreach( [c,h,vec,action] in soft- limit 14) {
+		printf("%d:%x:%x:%s->%d\n", c, h, vec, symdata(action), soft[c,h,vec,action]);       
+	}
+ 
+/*
+	println("==workqueue wq_thread:work_func")
+	foreach( [wq_thread,work_func] in wq- limit 7) {
+		printf("%x:%x->%d\n", wq_thread, work_func, wq[wq_thread, work_func]);  
+	}
+*/
+ 
+	printf("\n")
+
+	delete hard
+	delete soft
+//	delete wq
+}
+ 
+probe begin {
+	println("~")
+}
+

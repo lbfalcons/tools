@@ -1,0 +1,33 @@
+#!/bin/env stap
+
+global request_bytes;
+
+%{
+#include <linux/fs.h>
+}%
+
+function get_generic_file_read:long(s:long) %{
+  struct read_descriptor_t* rd = (struct read_descriptor_t*) THIS->s;
+  THIS->__retvalue = rd->count;
+%}
+
+probe kernel.function("do_generic_file_read")
+{
+  if( pid() == target() )
+  {
+    request_bytes += get_generic_file_read(
+    //request_bytes += $desc.count;
+  }
+}
+
+probe timer.s(1)
+{
+  printf("request_bytes %d\n",
+      request_bytes
+      );
+}
+
+probe begin
+{
+  println("====");
+}

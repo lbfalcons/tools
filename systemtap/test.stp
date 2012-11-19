@@ -1,0 +1,16 @@
+#!/bin/env stap
+
+#probe syscall.read
+probe kernel.function("vfs_read")
+{
+	if( pid() == target()  )
+	{
+		printf("%s %s\n",execname(),$$vars);
+		printf("%0x\n",$file);
+	}
+}
+
+probe begin
+{
+	printf("start\n");
+}

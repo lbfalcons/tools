@@ -1,0 +1,12 @@
+#!/bin/env stap
+
+
+probe timer.s(1)
+{
+	printf("%d\n",perf.hw.cache_misses)
+}
+
+probe begin
+{
+	printf("start\n")
+}

@@ -1,0 +1,22 @@
+#!/bin/env stap
+
+global count
+
+probe vfs.read
+{
+	count[execname()] += $count
+}
+
+probe timer.s(3)
+{
+	foreach( c in count- limit 2 )
+	{
+		printf("%s : %d\n",c,count[c])
+	}
+	printf("\n");
+}
+
+probe begin
+{
+	printf("start\n")
+}
