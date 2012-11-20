@@ -1,0 +1,396 @@
+" ######## for vundle ##############
+" only for >= vim 7.2
+" install the vundle
+" git clone http://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+" install:
+" 	:BundleInstall
+" update:
+" 	:BundleInstall!
+" delete not in list
+"	:BundleClean
+filetype off        " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" " required!
+" vim script name is found at http://vim-scripts.org/vim/scripts.html
+Bundle 'gmarik/vundle'
+
+" vim-scripts repos
+" switch from header and cpp/c file
+Bundle 'a.vim'
+" syntax for c
+Bundle 'c.vim'
+" syntax for cpp
+Bundle 'cpp.vim'
+" ccurately completing C, C++, Objective-C and Objective-C++ code
+" used by clang-complete
+Bundle 'clang'
+" If you've got special flags for a project (especially -I and -D ones), clang
+" may be unable to complete your code. To overcome this limitation put the
+" flags inside the file .clang_complete at the root of your project.  
+Bundle 'clang-complete'
+Bundle 'ctags.vim'
+Bundle 'taglist.vim'
+" Bundle 'project.tar.gz'
+Bundle 'minibufexpl.vim'
+"Bundle 'grep.vim'
+
+
+" ########  vundle end ##################################################
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Get out of VI's compatible mode..
+set nocompatible
+"source $VIMRUNTIME/vimrc_example.vim
+"source $VIMRUNTIME/mswin.vim
+
+"Sets how many lines of history VIM har to remember
+set history=400
+
+"Enable filetype plugin
+filetype plugin on
+filetype indent on
+
+"Set to auto read when a file is changed from the outside
+set autoread
+
+"Have the mouse enabled all the time:
+" set mouse=v
+ 
+"Set mapleader
+let mapleader = ","
+let g:mapleader = ","
+
+"Fast saving
+nmap <leader>w :wa!<cr>
+nmap <leader>q :q<cr>
+nmap <leader>m :wa<cr>:make<cr>:cw<cr><cr>
+" nmap <leader>f :find<cr>
+
+""Fast reloading of the .vimrc
+"map <leader>s :source ~/vim_local/vimrc<cr>
+""Fast editing of .vimrc
+"map <leader>e :e! ~/vim_local/vimrc<cr>
+""When .vimrc is edited, reload it
+"autocmd! bufwritepost vimrc source ~/vim_local/vimrc
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Enable syntax hl
+syntax enable
+
+if has("gui_running")
+  set guioptions-=T
+else
+  colorscheme evening
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" VIM userinterface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Set 7 lines to the curors - when moving vertical..
+set so=7
+
+"Turn on WiLd menu
+set wildmenu
+
+"Always show current position
+set ruler
+
+"The commandbar is 2 high
+set cmdheight=2
+
+"Show line number
+set nu
+
+"Do not redraw, when running macros.. lazyredraw
+set lz
+
+"Change buffer - without saving
+set hid
+
+"Set backspace
+set backspace=eol,start,indent
+
+"Bbackspace and cursor keys wrap to
+set whichwrap+=<,>,h,l
+
+"Ignore case when searching
+set ignorecase
+set incsearch
+
+"Set magic on
+set magic
+
+"No sound on errors.
+set noerrorbells
+set novisualbell
+set t_vb=
+
+"show matching bracets
+set showmatch
+
+"How many tenths of a second to blink
+set mat=2
+
+"Highlight search things
+set hlsearch
+
+""""""""""""""""""""""""""""""
+" Statusline
+""""""""""""""""""""""""""""""
+"Always hide the statusline
+set laststatus=2
+
+function! CurDir()
+  let curdir = substitute(getcwd(), '/Users/amir/', "~/", "g")
+  return curdir
+endfunction
+
+"Format the statusline
+set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
+
+
+
+""""""""""""""""""""""""""""""
+" Visual
+""""""""""""""""""""""""""""""
+" From an idea by Michael Naumann
+function! VisualSearch(direction) range
+  let l:saved_reg = @"
+  execute "normal! vgvy"
+  let l:pattern = escape(@", '\\/.*$^~[]')
+  let l:pattern = substitute(l:pattern, "\n$", "", "")
+  if a:direction == 'b'
+    execute "normal ?" . l:pattern . "^M"
+  else
+    execute "normal /" . l:pattern . "^M"
+  endif
+  let @/ = l:pattern
+  let @" = l:saved_reg
+endfunction
+
+"Basically you press * or # to search for the current selection !! Really useful
+vnoremap <silent> * :call VisualSearch('f')<CR>
+vnoremap <silent> # :call VisualSearch('b')<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Moving around and tabs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Map space to / and c-space to ?
+map <space> /
+map <c-space> ?
+
+"Smart way to move btw. windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+"Actually, the tab does not switch buffers, but my arrows
+"Bclose function ca be found in "Buffer related" section
+map <leader>bd :Bclose<cr>
+map <down> <leader>bd
+"Use the arrows to something usefull
+map <right> :bn<cr>
+map <left> :bp<cr>
+
+"Tab configuration
+map <leader>tn :tabnew %<cr>
+map <leader>te :tabedit
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+try
+  set switchbuf=usetab
+  set stal=2
+catch
+endtry
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Parenthesis/bracket expanding
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+vnoremap $1 <esc>`>a)<esc>`<i(<esc>
+")
+vnoremap $2 <esc>`>a]<esc>`<i[<esc>
+vnoremap $3 <esc>`>a}<esc>`<i{<esc>
+vnoremap $$ <esc>`>a"<esc>`<i"<esc>
+vnoremap $q <esc>`>a'<esc>`<i'<esc>
+vnoremap $w <esc>`>a"<esc>`<i"<esc>
+
+"Map auto complete of (, ", ', [
+inoremap $1 ()<esc>:let leavechar=")"<cr>i
+inoremap $2 []<esc>:let leavechar="]"<cr>i
+inoremap $4 {<esc>o}<esc>:let leavechar="}"<cr>O
+inoremap $3 {}<esc>:let leavechar="}"<cr>i
+inoremap $q ''<esc>:let leavechar="'"<cr>i
+inoremap $w ""<esc>:let leavechar='"'<cr>i
+au BufNewFile,BufRead *.\(vim\)\@! inoremap " ""<esc>:let leavechar='"'<cr>i
+au BufNewFile,BufRead *.\(txt\)\@! inoremap ' ''<esc>:let leavechar="'"<cr>i
+
+imap <m-l> <esc>:exec "normal f" . leavechar<cr>a
+imap <d-l> <esc>:exec "normal f" . leavechar<cr>a
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" General Abbrevs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"My information
+iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
+iab xname Amir Salihefendic
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Editing mappings etc.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Remap VIM 0
+map 0 ^
+
+"Move a line of text using control
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+set completeopt=menu
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Buffer realted
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Fast open a buffer by search for a name
+map <c-q> :sb
+
+""Open a dummy buffer for paste
+"map <leader>q :e ~/buffer<cr>
+
+"Restore cursor to file position in previous editing session
+set viminfo='10,\"100,:20,%,n~/.viminfo
+au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+
+  " Buffer - reverse everything ... :)
+  map <F9> ggVGg?
+
+  " Don't close window, when deleting a buffer
+  command! Bclose call <SID>BufcloseCloseIt()
+
+  function! <SID>BufcloseCloseIt()
+    let l:currentBufNum = bufnr("%")
+    let l:alternateBufNum = bufnr("#")
+
+    if buflisted(l:alternateBufNum)
+      buffer #
+    else
+      bnext
+    endif
+
+    if bufnr("%") == l:currentBufNum
+      new
+    endif
+
+    if buflisted(l:currentBufNum)
+      execute("bdelete! ".l:currentBufNum)
+    endif
+  endfunction
+
+
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  " Files and backups
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  "Turn backup off
+  set nobackup
+  set nowb
+  set noswapfile
+
+
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  " Folding
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  "Enable folding, I find it very useful
+  " Za open/close the expr
+  " zo open
+  " zc close
+  " zM close all
+  " zR open all
+  set foldmethod=syntax
+  set foldlevel=100
+
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  " Text options
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  set expandtab
+  set shiftwidth=2
+
+  au FileType c,cpp setlocal cinoptions=:0,g0,(0,w1 shiftwidth=4 tabstop=4
+
+  set smarttab
+  set lbr
+  set tw=500
+
+  """"""""""""""""""""""""""""""
+  " Indent
+  """"""""""""""""""""""""""""""
+  "Auto indent
+  set ai
+
+  "Smart indet
+  set si
+
+  "C-style indeting
+  set cindent
+
+  "Wrap lines
+  set wrap
+
+
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  " Spell checking
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  map <leader>sn ]s
+  map <leader>sp [s
+  map <leader>sa zg
+  map <leader>s? z=
+
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  " Plugin configuration
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+  """"""""""""""""""""""""""""""
+  " Minibuffer
+  """"""""""""""""""""""""""""""
+  let g:miniBufExplModSelTarget = 1
+  let g:miniBufExplorerMoreThanOne = 2
+  let g:miniBufExplModSelTarget = 0
+  let g:miniBufExplUseSingleClick = 1
+  let g:miniBufExplMapWindowNavVim = 1
+  let g:miniBufExplVSplit = 25
+  let g:miniBufExplSplitBelow=1
+
+  let g:bufExplorerSortBy = "name"
+
+  autocmd BufRead,BufNew :call UMiniBufExplorer
+  """"""""""""""""""""""""""""""
+  " Tag list (ctags) - not used
+  """"""""""""""""""""""""""""""
+  "let Tlist_Ctags_Cmd=$VIMRUNTIME.'/ctags.exe'
+  let Tlist_Sort_Type = "name"
+  let Tlist_Show_Menu = 1
+  map <leader>t :Tlist<cr>
+
+  """"""""""""""""""""""""""""""""""""""
+  " Filetype generic
+  """"""""""""""""""""""""""""""""""""""
+
+  " c/c++ header
+  function! s:insert_gates()
+    let gatename = substitute(toupper(expand("%:t")), "\\.", "_", "g")
+    execute "normal! i#ifndef " . gatename
+    execute "normal! o#define " . gatename . " "
+    execute "normal! Go#endif /* " . gatename . " */"
+    normal! kk
+  endfunction
+
+  autocmd BufNewFile *.{h,hpp} call <SID>insert_gates()
