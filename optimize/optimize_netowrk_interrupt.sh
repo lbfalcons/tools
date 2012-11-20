@@ -6,8 +6,6 @@
 # object:
 # 	to banlance hardirq among cpus.
 #	to banlance softirq among cpus.
-#	adjust some tcp parament 
-#	using deadline io scheduler
 
 #network_dev_list=`ls /sys/class/net/ | egrep -v "lo|bond0|bonding_masters"`
 network_dev_list=`/sbin/ifconfig | grep "Link encap" | awk '{ print $1}' | egrep -v "bond0|lo"`
@@ -100,26 +98,4 @@ do
     echo $rps |tee /sys/class/net/$d/queues/rx-$i/rps_cpus >/dev/null
     echo $single_flow_entry |tee /sys/class/net/$d/queues/rx-$i/rps_flow_cnt >/dev/null
   done
-done
-
-
-###############  adjust tcp ########################################
-echo 10 > /proc/sys/net/ipv4/tcp_fin_timeout
-echo 1 > /proc/sys/net/ipv4/tcp_tw_recycle
-echo 1 > /proc/sys/net/ipv4/tcp_tw_reuse
-#echo 180000 > /proc/sys/net/ipv4/tcp_max_tw_buckets
-
-############## adjust io scheduler ###############################
-# get subdev's name
-disk_list_tmp=`mount | awk '{ print $1}' | grep "/dev/" | awk -F'/' '{print $3'}`
-
-# get dev's name
-disk_list=`for d in $disk_list_tmp
-do
-  echo $(expr $d : '\(.*\).')
-done | sort | uniq`
-
-for d in $disk_list
-do
-  echo "deadline" > /sys/class/block/$d/queue/scheduler
 done
