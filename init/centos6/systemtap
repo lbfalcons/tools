@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Will install kernel-debuginfo by debuginfo-install
+# and the package is too big to download by yum.
+# So,we can download it by myself and mv it to
+# /var/cache/yum/x86_64/6/debug/packages
+
 install="yum install -y "
 erase="yum erase -y "
 
@@ -10,4 +15,4 @@ $install systemtap yum-utils
 $install kernel-$kernel_version kernel-devel-$kernel_version
 debuginfo-install kernel-$kernel_version
 
-sed 's/enabled=1/enabled=0/g' -i /etc/yum.repos.d/CentOS-Debuginfo.repo
+#sed 's/enabled=1/enabled=0/g' -i /etc/yum.repos.d/CentOS-Debuginfo.repo
