@@ -17,8 +17,22 @@ software+=" sysstat file tree"
 software+=" zip unzip"
 # version control tools
 software+=" git svn"
+# for lscpu,lsblk
+software+=" util-linux-ng"
 
 $install $software
 
 
 /etc/init.d/vsftpd start
+
+
+function disp
+{
+	echo "download $1 from $2"
+}
+
+# for aspersa
+disp "percona" "http://www.percona.com/redir/downloads/percona-toolkit/LATEST/percona-toolkit-2.1.7.tar.gz"
+
+# to display cpu topology
+disp "intel performance tuning utility" "http://software.intel.com/en-us/articles/intel-performance-tuning-utility/"
