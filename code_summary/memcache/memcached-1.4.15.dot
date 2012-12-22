@@ -1,0 +1,79 @@
+digraph memcache{
+  rankdir=LR
+  node [fillcolor=yellow, shape=ellipse, style=filled];
+  edge [ color = red,len = 3 ];
+
+  // outer network
+  network [ shape = doublecircle,style=filled,fillcolor = red ];
+
+  {
+    prefix_stats [ label = "prefix_stats\nsize 256"];
+    prefix_stat [ label = "prefix_stat\nlinked list" ];
+
+    stat -> basic_stat -> { current_items;hash_power_level };
+    stat -> prefix_stats;
+    prefix_stats -> prefix_stat;
+  }
+
+  {
+    mem_base [ label = "mem_base\nused if preallocate" ];
+    slabclasses [ label = "slabclass array\nsize:max(201,item_size_max/factor)"];
+    slab_class [ label="slab_list|slabs"];
+    allocate [ label = "allocate by block\n,block size is item_size_max\nor item_size * perslabs"];
+    allocate_block [ shape = Mrecord,label = "item|item|...|item"];
+
+    slab -> mem_base -> mlock;
+    slab -> slabclasses;
+    slabclasses -> slab_class;
+    assoc_maintenance_thread -> slabclasses [ label = "if enable slab_reassign" ];
+
+    slab_class -> allocate;
+    allocate -> allocate_block;
+  }
+
+  {
+    freeconns [ label = "free conns\ninit 200"];
+  }
+
+
+  subgraph assoc {
+    primary_hashtable;
+    old_hashtable;
+    assoc_maintenance_thread;
+  };
+
+  subgraph thread {
+    network -> { dispatcher_thread;work_thread};
+    dispatcher_thread -> work_thread [ label = "notify new conn coming"];
+    work_thread -> stat;
+    dispatcher_thread -> stat;
+    work_thread -> slabclasses;
+    work_thread -> { suffix_cache;conn_queue};
+
+    thread_libevent_process [ shape = diamond] ;
+    work_thread -> thread_libevent_process [ label = "notify_receive_fd"];
+    thread_libevent_process -> new_conn [ label = "command 'c'"];
+    new_conn -> freeconns;
+    thread_libevent_process -> granular_item_lock [ label = "command 'l'"];
+    thread_libevent_process -> global_item_lock [ label = "command 'g'"];
+
+    event_handler [ shape = diamond];
+    thread_libevent_process -> event_handler-> drive_machine;
+
+    conn_listening [ label = "dispatcher's stat"];
+    //drive_machine -> conn_listening;
+    conn_listening -> conn_new_cmd [ label = "new conn dispatch to work"];
+    conn_new_cmd -> conn_waiting [ label = "wait data to read"];
+    conn_waiting -> conn_read [ label = "has data to read" ];
+    conn_read -> conn_parse_cmd [ label = "read some data"];
+    conn_read -> conn_waiting [ label = "wait data to read" ];
+    conn_parse_cmd -> conn_new_cmd [ label = "after ack" ];
+    conn_parse_cmd -> conn_waiting [ label = "need more data"];
+    conn_parse_cmd -> conn_nread [ label = "read last n data"];
+    conn_parse_cmd -> conn_mwrite [ label = "mulit write"];
+    conn_parse_cmd -> conn_write [ label = "single resp"];
+    conn_nread -> conn_swallow [ label = "error,swallow last byte"];
+    conn_swallow -> conn_closing [ label = "swallow all byte"];
+    //{conn_mwrite;conn_write;conn_waiting;conn_new_cmd;conn_read;conn_nread} -> conn_closing [ label = "error"];
+  };
+}

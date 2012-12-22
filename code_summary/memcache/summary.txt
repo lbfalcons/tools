@@ -1,0 +1,2 @@
+1.all memory operate but data(by slab) is malloc()/calloc()/realloc(),not cache or slab.
+2.all stat op is protected by pthread_mutex,not atomic_op.
