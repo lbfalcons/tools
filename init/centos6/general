@@ -20,7 +20,9 @@ software+=" git svn"
 # for lscpu,lsblk
 software+=" util-linux-ng"
 # autotools
-software+="autoconf automake"
+software+=" autoconf automake"
+# profiler
+software="perf "
 
 $install $software
 
