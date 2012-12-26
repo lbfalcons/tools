@@ -19,6 +19,8 @@ software+=" zip unzip"
 software+=" git svn"
 # for lscpu,lsblk
 software+=" util-linux-ng"
+# autotools
+software+="autoconf automake"
 
 $install $software
 
