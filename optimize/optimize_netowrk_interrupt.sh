@@ -19,16 +19,17 @@ fi
 
 max_cpu=`grep processor /proc/cpuinfo | tail -n 1 | awk -F':' '{print $2}'`
 
-# only run when the num of hard interrupt of the nic is same with cpu's num
+
 function network_queue
 {
+  # skip cpu0
+  cpu=1
   for d in $network_dev_list
   do
     irq_total=`grep $d /proc/interrupts | wc -l `
     irq_min=`grep $d /proc/interrupts | head -n 1 | awk -F':' '{ print $1}'`
     irq_max=$(($irq_min + $irq_total -1 ))
 
-    cpu=1
     for i in `seq $irq_min 1 $irq_max`
     do
       cpu_hex=`echo "obase=16;$cpu" | bc`
@@ -36,6 +37,12 @@ function network_queue
       echo "$cpu_hex" > /proc/irq/$i/smp_affinity
 
       cpu=$(($cpu + $cpu))
+
+      if [ $cpu -gt $max_cpu ]
+      then
+        # skip cpu0
+        cpu = 1
+      fi
     done
   done
 }
