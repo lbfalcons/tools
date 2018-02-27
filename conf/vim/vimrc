@@ -2,30 +2,60 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+"
+" install plugs
+" :PluginInstall
+"
+" for YCM
+" yum install -y automake gcc gcc-c++ kernel-devel cmake python-devel python3-devel
+" cd .vim/bundle/YouCompleteMe
+" ./install.py
+
+
 " set the runtime path to include Vundle and initialize
  set rtp+=~/.vim/bundle/Vundle.vim
  call vundle#begin()
-" " alternatively, pass a path where Vundle should install plugins
-" "call vundle#begin('~/some/path/here')
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
 "
-" " let Vundle manage Vundle, required
- Plugin 'VundleVim/Vundle.vim'
- Plugin 'a.vim'
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'a.vim'
 " syntax for c
- Plugin 'c.vim'
+Plugin 'c.vim'
 " syntax for cpp
- Plugin 'cpp.vim'
+Plugin 'cpp.vim'
 " ccurately completing C, C++, Objective-C and Objective-C++ code
 " used by clang-complete
- Plugin 'clang'
+Plugin 'clang'
+Plugin 'hari-rangarajan/CCTree' 
+" startup, taglist confilct
+" Plugin 'mhinz/vim-startify'
+" theme
+Plugin 'morhetz/gruvbox'
 " If you've got special flags for a project (especially -I and -D ones), clang
 " may be unable to complete your code. To overcome this limitation put the
 " flags inside the file .clang_complete at the root of your project.  
 Plugin 'clang-complete'
 Plugin 'ctags.vim'
 Plugin 'taglist.vim'
+" dir tree
+Plugin 'scrooloose/nerdtree'
+
+" go
+Plugin 'fatih/vim-go'
 " Bundle 'project.tar.gz'
-Plugin 'minibufexpl.vim'
+" Plugin 'minibufexpl.vim'
+"
+Plugin 'Valloric/YouCompleteMe'
+
+" about code
+Plugin 'kien/rainbow_parentheses.vim'
+Plugin 'Valloric/MatchTagAlways'
+Plugin 'Yggdroot/indentLine'
+
+
 "
 "
 "
@@ -72,7 +102,7 @@ set nocompatible
 "source $VIMRUNTIME/mswin.vim
 
 "Sets how many lines of history VIM har to remember
-set history=400
+set history=4000
 
 "Enable filetype plugin
 filetype plugin on
@@ -92,6 +122,7 @@ let g:mapleader = ","
 nmap <leader>w :wa!<cr>
 nmap <leader>q :q!<cr>
 nmap <leader>m :wa<cr>:make<cr>:cw<cr><cr>
+nmap <leader>k :wa<cr>:! go build<cr>
 " nmap <leader>f :find<cr>
 
 ""Fast reloading of the .vimrc
@@ -107,11 +138,11 @@ nmap <leader>m :wa<cr>:make<cr>:cw<cr><cr>
 "Enable syntax hl
 syntax enable
 
-if has("gui_running")
-  set guioptions-=T
-else
-  colorscheme evening
-endif
+"if has("gui_running")
+"  set guioptions-=T
+"else
+"  colorscheme evening
+"endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " VIM userinterface
@@ -129,7 +160,13 @@ set ruler
 set cmdheight=2
 
 "Show line number
-set nu
+set number
+set relativenumber
+
+" cursor
+set cursorline
+"set cursorcolumn
+
 
 "Do not redraw, when running macros.. lazyredraw
 set lz
@@ -369,6 +406,17 @@ au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|
 
 
   """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  " YCM
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  let g:ycm_server_keep_logfiles = 1
+  let g:ycm_server_log_level = 'debug'
+  let g:ycm_global_ycm_extra_conf= "~/.ycm_extra_conf.py"
+
+  "" go
+  let g:go_play_browser_command = ''
+
+
+  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
   " Spell checking
   """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
   map <leader>sn ]s
@@ -379,6 +427,15 @@ au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|
   """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
   " Plugin configuration
   """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+  " nerdtree设置
+  "autocmd VimEnter * NERDTree
+  map <F2> :NERDTreeToggle<CR>
+  let NERDTreeIgnore=['\.o$', '\.ko$', '\.so$', '\.a$', '\.swp$', '\.bak$', '\~$']
+  let NERDTreeSortOrder=['\/$', 'Makefile', '\.c$', '\.cc$', '\.cpp$', '\.h$', '*', '\~$']
+  let NERDTreeMinimalUI=1
+  "let NERDTreeWinPos="right"
+  let NERDTreeQuitOnOpen=1
 
   """"""""""""""""""""""""""""""
   " Minibuffer
@@ -398,8 +455,12 @@ au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|
   " Tag list (ctags) - not used
   """"""""""""""""""""""""""""""
   "let Tlist_Ctags_Cmd=$VIMRUNTIME.'/ctags.exe'
+  " https://blog.easwy.com/archives/advanced-vim-skills-taglist-plugin/
   let Tlist_Sort_Type = "name"
   let Tlist_Show_Menu = 1
+  let Tlist_Auto_Open = 1
+  let Tlist_Use_Right_Window=1
+  let Tlist_File_Fold_Auto_Close=1
   map <leader>t :Tlist<cr>
 
   """"""""""""""""""""""""""""""""""""""
@@ -416,3 +477,9 @@ au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|
   endfunction
 
   autocmd BufNewFile *.{h,hpp} call <SID>insert_gates()
+
+  " gruvbox
+  se t_Co=256
+  colorscheme gruvbox
+  set background=dark    " Setting dark mode
+
