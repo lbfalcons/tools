@@ -30,7 +30,7 @@ Plugin 'cpp.vim'
 " used by clang-complete
 Plugin 'clang'
 Plugin 'hari-rangarajan/CCTree' 
-" startup, taglist confilct
+" startup
 Plugin 'mhinz/vim-startify'
 " theme
 Plugin 'morhetz/gruvbox'
