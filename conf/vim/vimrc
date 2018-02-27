@@ -30,7 +30,7 @@ Plugin 'cpp.vim'
 " used by clang-complete
 Plugin 'clang'
 Plugin 'hari-rangarajan/CCTree' 
-" startup
+" startup, 
 Plugin 'mhinz/vim-startify'
 " theme
 Plugin 'morhetz/gruvbox'
@@ -162,6 +162,10 @@ set relativenumber
 " cursor
 set cursorline
 "set cursorcolumn
+
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
 
 
 "Do not redraw, when running macros.. lazyredraw
