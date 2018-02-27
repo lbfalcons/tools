@@ -31,7 +31,7 @@ Plugin 'cpp.vim'
 Plugin 'clang'
 Plugin 'hari-rangarajan/CCTree' 
 " startup, taglist confilct
-" Plugin 'mhinz/vim-startify'
+Plugin 'mhinz/vim-startify'
 " theme
 Plugin 'morhetz/gruvbox'
 " If you've got special flags for a project (especially -I and -D ones), clang
@@ -48,17 +48,13 @@ Plugin 'fatih/vim-go'
 " Bundle 'project.tar.gz'
 " Plugin 'minibufexpl.vim'
 "
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 
 " about code
 Plugin 'kien/rainbow_parentheses.vim'
 Plugin 'Valloric/MatchTagAlways'
 Plugin 'Yggdroot/indentLine'
 
-
-"
-"
-"
 " " The following are examples of different formats supported.
 " " Keep Plugin commands between vundle#begin/end.
 " " plugin on GitHub repo
@@ -215,7 +211,9 @@ endfunction
 "Format the statusline
 set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
 
-
+" for vim-startify
+let g:startify_files_number = 20
+let g:startify_change_to_dir = 0
 
 """"""""""""""""""""""""""""""
 " Visual
