@@ -7,11 +7,14 @@ filetype off                  " required
 " install plugs
 " :PluginInstall
 "
-" for YCM
+" for YCM , if it's vm, need 2G memory
+" download clang+llvm by hand, url is printed by ./install.py
 " yum install -y automake gcc gcc-c++ kernel-devel cmake python-devel python3-devel
 " cd .vim/bundle/YouCompleteMe
-" ./install.py
-
+" ./install.py --clang-completer --go-completer
+"
+" for startify
+" mkdir -p ~/.vim/files/info
 
 " set the runtime path to include Vundle and initialize
  set rtp+=~/.vim/bundle/Vundle.vim
@@ -48,7 +51,7 @@ Plugin 'fatih/vim-go'
 " Bundle 'project.tar.gz'
 " Plugin 'minibufexpl.vim'
 "
-"Plugin 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe'
 
 " about code
 Plugin 'kien/rainbow_parentheses.vim'
@@ -133,6 +136,7 @@ nmap <leader>k :wa<cr>:! go build<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "Enable syntax hl
 syntax enable
+syn keyword   myTodo   contained    TODO FIXME XXX
 
 "if has("gui_running")
 "  set guioptions-=T
@@ -166,7 +170,6 @@ set cursorline
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-
 
 "Do not redraw, when running macros.. lazyredraw
 set lz
@@ -218,6 +221,7 @@ set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
 " for vim-startify
 let g:startify_files_number = 20
 let g:startify_change_to_dir = 0
+set viminfo='100,n$HOME/.vim/files/info/viminfo
 
 """"""""""""""""""""""""""""""
 " Visual
