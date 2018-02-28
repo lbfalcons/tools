@@ -122,10 +122,11 @@ nmap <leader>w :wa!<cr>
 nmap <leader>q :q!<cr>
 nmap <leader>m :wa<cr>:make<cr>:cw<cr><cr>
 nmap <leader>k :wa<cr>:! go build<cr>
+nmap <leader>n :nohl<cr>
 " nmap <leader>f :find<cr>
 
 ""Fast reloading of the .vimrc
-"map <leader>s :source ~/vim_local/vimrc<cr>
+map <leader>s :source ~/.vimrc<cr>
 ""Fast editing of .vimrc
 "map <leader>e :e! ~/vim_local/vimrc<cr>
 ""When .vimrc is edited, reload it
