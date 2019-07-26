@@ -1,0 +1,5 @@
+yum install perf
+wget https://raw.githubusercontent.com/brendangregg/FlameGraph/master/stackcollapse-perf.pl
+wget https://raw.githubusercontent.com/brendangregg/FlameGraph/master/flamegraph.pl
+
+chmod +x stackcollapse-perf.pl flamegraph.pl
